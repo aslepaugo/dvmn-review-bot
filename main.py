@@ -36,9 +36,19 @@ def poll_for_new_reviews():
             elif response.json()['status'] == 'found':
                 for attempt in response.json()['new_attempts']:
                     if attempt['is_negative']:
-                        bot.send_message(text=f'Преподаватель нашел ошибки в работе: {attempt["lesson_title"]}', chat_id=chat_id, parse_mode='HTML')
+                        bot.send_message(
+                            text=f'Преподаватель нашел ошибки в работе: \
+                                   <a href="{attempt["lesson_url"]}">{attempt["lesson_title"]}</a>',
+                            chat_id=chat_id,
+                            parse_mode='HTML'
+                            )
                     else:
-                        bot.send_message(text=f'Преподаватель проверил работу: {attempt["lesson_title"]}', chat_id=chat_id, parse_mode='HTML')
+                        bot.send_message(
+                            text=f'Преподаватель проверил работу: \
+                                <a href="{attempt["lesson_url"]}">{attempt["lesson_title"]}</a>',
+                            chat_id=chat_id,
+                            parse_mode='HTML'
+                            )
                 params = {
                     "timestamp": response.json()['last_attempt_timestamp']
                 }
