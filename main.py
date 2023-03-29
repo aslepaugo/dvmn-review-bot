@@ -21,8 +21,7 @@ def poll_for_new_reviews():
         "timestamp": None
     }
     bot = telegram.Bot(token=os.environ['TELEGRAM_TOKEN'])
-    chat_id = os.environ['TELEGRAM_USER_ID']
-    
+    chat_id = os.environ['TELEGRAM_USER_ID']    
     while True:
         print('Polling... ')
         try:
@@ -35,7 +34,11 @@ def poll_for_new_reviews():
                     "timestamp": response.json()['timestamp_to_request']
                 }
             elif response.json()['status'] == 'found':
-                bot.send_message(text='Преподаватель проверил работу!', chat_id=chat_id)
+                for attempt in response.json()['new_attempts']:
+                    if attempt['is_negative']:
+                        bot.send_message(text=f'Преподаватель нашел ошибки в работе: {attempt["lesson_title"]}', chat_id=chat_id, parse_mode='HTML')
+                    else:
+                        bot.send_message(text=f'Преподаватель проверил работу: {attempt["lesson_title"]}', chat_id=chat_id, parse_mode='HTML')
                 params = {
                     "timestamp": response.json()['last_attempt_timestamp']
                 }
