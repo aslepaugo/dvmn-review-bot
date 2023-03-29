@@ -23,13 +23,9 @@ def poll_for_new_reviews():
     bot = telegram.Bot(token=os.environ['TELEGRAM_TOKEN'])
     chat_id = os.environ['TELEGRAM_USER_ID']    
     while True:
-        print('Polling... ')
         try:
-            print(params)
             response = requests.get(POLLING_URL, headers=headers, timeout=TIMEOUT, params=params)
-            print(response.json()['status'])
             if response.json()['status'] == 'timeout':
-                print('Timeout')
                 params = {
                     "timestamp": response.json()['timestamp_to_request']
                 }
@@ -52,7 +48,6 @@ def poll_for_new_reviews():
                 params = {
                     "timestamp": response.json()['last_attempt_timestamp']
                 }
-            print(response.json())
         except requests.exceptions.ReadTimeout:
             continue
         except requests.exceptions.ConnectionError:
@@ -60,7 +55,6 @@ def poll_for_new_reviews():
             continue
 
         response.raise_for_status()
-        print(response.json())
 
 
 if __name__ == "__main__":
