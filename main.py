@@ -1,5 +1,6 @@
 import os
 import requests
+import telegram
 
 from dotenv import load_dotenv
 from time import sleep
@@ -9,7 +10,7 @@ load_dotenv()
 
 DVMN_URL = "https://dvmn.org/api/user_reviews/"
 POLLING_URL = "https://dvmn.org/api/long_polling/"
-TIMEOUT = 5
+TIMEOUT = 120
 
 
 def poll_for_new_reviews():
@@ -19,15 +20,22 @@ def poll_for_new_reviews():
     params = {
         "timestamp": None
     }
+    bot = telegram.Bot(token=os.environ['TELEGRAM_TOKEN'])
+    chat_id = os.environ['TELEGRAM_USER_ID']
+    
     while True:
+        print('Polling... ')
         try:
+            print(params)
             response = requests.get(POLLING_URL, headers=headers, timeout=TIMEOUT, params=params)
-
+            print(response.json()['status'])
             if response.json()['status'] == 'timeout':
+                print('Timeout')
                 params = {
                     "timestamp": response.json()['timestamp_to_request']
                 }
             elif response.json()['status'] == 'found':
+                bot.send_message(text='Преподаватель проверил работу!', chat_id=chat_id)
                 params = {
                     "timestamp": response.json()['last_attempt_timestamp']
                 }
@@ -42,14 +50,5 @@ def poll_for_new_reviews():
         print(response.json())
 
 
-def main():
-    headers = {
-        "Authorization": os.environ['DVMN_TOKEN']
-    }
-    response = requests.get(DVMN_URL, headers=headers)
-    print(response.json())
-
-
 if __name__ == "__main__":
-    main()
     poll_for_new_reviews()
