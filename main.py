@@ -5,8 +5,6 @@ import telegram
 from dotenv import load_dotenv
 from time import sleep
 
-load_dotenv()
-
 
 DVMN_URL = "https://dvmn.org/api/user_reviews/"
 POLLING_URL = "https://dvmn.org/api/long_polling/"
@@ -58,4 +56,5 @@ def poll_for_new_reviews():
 
 
 if __name__ == "__main__":
+    load_dotenv()
     poll_for_new_reviews()
