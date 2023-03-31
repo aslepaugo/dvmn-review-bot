@@ -24,12 +24,13 @@ def poll_for_new_reviews():
         try:
             response = requests.get(POLLING_URL, headers=headers, timeout=TIMEOUT, params=params)
             response.raise_for_status()
-            if response.json()['status'] == 'timeout':
+            review_response = response.json()
+            if review_response['status'] == 'timeout':
                 params = {
-                    "timestamp": response.json()['timestamp_to_request']
+                    "timestamp": review_response['timestamp_to_request']
                 }
-            elif response.json()['status'] == 'found':
-                for attempt in response.json()['new_attempts']:
+            elif review_response['status'] == 'found':
+                for attempt in review_response['new_attempts']:
                     if attempt['is_negative']:
                         bot.send_message(
                             text=f'Преподаватель нашел ошибки в работе: \
@@ -45,7 +46,7 @@ def poll_for_new_reviews():
                             parse_mode='HTML'
                             )
                 params = {
-                    "timestamp": response.json()['last_attempt_timestamp']
+                    "timestamp": review_response['last_attempt_timestamp']
                 }
         except requests.exceptions.ReadTimeout:
             continue
