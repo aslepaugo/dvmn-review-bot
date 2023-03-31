@@ -23,6 +23,7 @@ def poll_for_new_reviews():
     while True:
         try:
             response = requests.get(POLLING_URL, headers=headers, timeout=TIMEOUT, params=params)
+            response.raise_for_status()
             if response.json()['status'] == 'timeout':
                 params = {
                     "timestamp": response.json()['timestamp_to_request']
@@ -51,8 +52,6 @@ def poll_for_new_reviews():
         except requests.exceptions.ConnectionError:
             sleep(5)
             continue
-
-        response.raise_for_status()
 
 
 if __name__ == "__main__":
