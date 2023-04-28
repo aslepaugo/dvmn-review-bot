@@ -11,7 +11,6 @@ DVMN_URL = "https://dvmn.org/api/user_reviews/"
 POLLING_URL = "https://dvmn.org/api/long_polling/"
 TIMEOUT = 120
 logger = logging.getLogger("dvmn-review-bot")
-logger.setLevel(os.environ.get("LOGGING_LEVEL", "INFO"))
 
 
 class TelegramLogsHandler(logging.Handler):
@@ -78,5 +77,6 @@ def poll_for_new_reviews():
 
 
 if __name__ == "__main__":
+    logger.setLevel(os.environ.get("LOGGING_LEVEL", "INFO"))
     load_dotenv()
     poll_for_new_reviews()
