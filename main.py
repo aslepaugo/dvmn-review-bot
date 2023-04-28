@@ -46,7 +46,6 @@ def poll_for_new_reviews():
                 params = {
                     "timestamp": review_response['timestamp_to_request']
                 }
-                logger.info("Бот ожидает новых ревью")
             elif review_response['status'] == 'found':
                 logger.info("Бот получил новые ревью")
                 for attempt in review_response['new_attempts']:
